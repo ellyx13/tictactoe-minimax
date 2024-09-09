@@ -4,7 +4,7 @@ from tkinter import messagebox, PhotoImage
 
 # Global variables
 current_player = "X"
-board = ["", "", "", "", "", "", "", "", ""]
+board = ["X", "O", "O", "O", "X", "O", "", "", ""]
 buttons = []
 
 # Function to reset the game
@@ -112,7 +112,9 @@ def find_best_move():
             if score > best_score:
                 best_score = score
                 best_move = i
-    return best_move
+            if best_score == 1:
+                return best_move
+    return best_move    
 
 
 # Setting up the Tkinter window
@@ -124,6 +126,8 @@ for i in range(9):
     button = tk.Button(window, text="", width=20, height=6, font=("Arial", 30),
                        command=lambda i=i: on_click(i))
     button.grid(row=i // 3, column=i % 3)
+    if board[i] != '':
+        button.config(text=board[i])
     buttons.append(button)
 
 # Start the Tkinter event loop
