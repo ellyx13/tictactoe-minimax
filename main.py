@@ -4,7 +4,7 @@ from tkinter import messagebox, PhotoImage
 
 # Global variables
 current_player = "X"
-board = ["X", "O", "O", "O", "X", "O", "", "", ""]
+board = ["", "", "", "", "", "", "", "", ""]
 buttons = []
 
 # Function to reset the game
