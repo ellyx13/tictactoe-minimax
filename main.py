@@ -3,7 +3,9 @@ from tkinter import messagebox, PhotoImage
 
 
 # Global variables
-current_player = "X"
+human = "O"
+computer= "X"
+current_player = human # Human player
 board = ["", "", "", "", "", "", "", "", ""]
 buttons = []
 
@@ -11,17 +13,17 @@ buttons = []
 def reset_game():
     global board, current_player
     board = ["", "", "", "", "", "", "", "", ""]
-    current_player = "X"
+    current_player = human
     for button in buttons:
         button.config(text="")
         
 # Function to switch the player
 def switch_player():
     global current_player
-    if current_player == "X":
-        current_player = "O"
+    if current_player == human:
+        current_player = computer
     else:
-        current_player = "X"
+        current_player = human
 
 # Function to check for a winner
 def check_winner():
@@ -57,7 +59,7 @@ def on_click(index):
             reset_game()
         else:
             switch_player()
-    if current_player == "O":  # If it's the computer's turn
+    if current_player == computer:  # If it's the computer's turn
         best_move = find_best_move()
         on_click(best_move)
 
@@ -65,25 +67,28 @@ def on_click(index):
 # Function to evaluate the board state
 def evaluate():
     winner = check_winner()
-    if winner == "X":  # Human wins
-        return -1
-    elif winner == "O":  # Computer wins
-        return 1
+    if winner == human:  # Human wins
+        return -10
+    elif winner == computer:  # Computer wins
+        return 10
     elif winner == "Draw":
         return 0
     return None
 
 # Helper function to print the current board state
-def print_board():
+def print_board(turn):
+    tab_size = '\t' * turn
+    print(f"{tab_size} Turn {turn}")
     for i in range(0, 9, 3):
-        print(board[i:i+3])
+        print(f"{tab_size} {board[i:i+3]}")
     print()
 
 # Minimax algorithm
-def minimax(is_maximizing):
+def minimax(is_maximizing, turn):
+    turn += 1
     score = evaluate()
     print(f"Current board, is maximizing {is_maximizing}:")
-    print_board()
+    print_board(turn)
 
     # If a winner is found, return the score
     if score is not None:
@@ -93,8 +98,8 @@ def minimax(is_maximizing):
         best_score = -float('inf')
         for i in range(9):
             if board[i] == "":
-                board[i] = "O"  # Simulate the computer's move
-                score = minimax(False)
+                board[i] = computer  # Simulate the computer's move
+                score = minimax(False, turn)
                 board[i] = ""  # Undo the move
                 best_score = max(best_score, score)
                 print(f"Maximizing - Updated Best Score: {best_score}")
@@ -103,8 +108,8 @@ def minimax(is_maximizing):
         best_score = float('inf')
         for i in range(9):
             if board[i] == "":
-                board[i] = "X"  # Simulate the human's move
-                score = minimax(True)
+                board[i] = human  # Simulate the human's move
+                score = minimax(True, turn)
                 board[i] = ""  # Undo the move
                 best_score = min(best_score, score)
                 print(f"Minimizing - Updated Best Score: {best_score}")
@@ -114,10 +119,13 @@ def minimax(is_maximizing):
 def find_best_move():
     best_score = -float('inf')
     best_move = None
+    print("\n\n =========================== Current board ============================ \n\n")
+    turn = 0
+    print_board(turn)
     for i in range(9):
         if board[i] == "":
-            board[i] = "O"  # Simulate the computer's move
-            score = minimax(False)
+            board[i] = computer  # Simulate the computer's move
+            score = minimax(False, turn)
             board[i] = ""  # Undo the move
             if score > best_score:
                 best_score = score
